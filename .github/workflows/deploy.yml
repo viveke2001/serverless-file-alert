@@ -7,6 +7,8 @@ on:
   pull_request:
     branches:
       - main  # Runs on pull requests to main
+  workflow_dispatch:
+    
 
 
 
