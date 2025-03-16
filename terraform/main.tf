@@ -12,7 +12,7 @@ resource "aws_sns_topic" "file_alerts" {
 resource "aws_sns_topic_subscription" "email_subscription" {
   topic_arn = aws_sns_topic.file_alerts.arn
   protocol  = "email"
-  endpoint  = "evreddy072001@gmail.com"  
+  endpoint  = var.endpoint
 }
 
 # IAM Role for Lambda
