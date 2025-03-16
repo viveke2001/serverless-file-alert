@@ -32,7 +32,8 @@ resource "aws_iam_role" "lambda_role" {
 resource "aws_iam_policy_attachment" "lambda_policy" {
   name       = "lambda_policy_attachment"
   roles      = [aws_iam_role.lambda_role.name]
-  policy_arn = "arn:aws:iam::aws:policy/AWSLambdaBasicExecutionRole"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+
 }
 
 # Lambda Function
@@ -41,7 +42,7 @@ resource "aws_lambda_function" "file_alert_function" {
   role          = aws_iam_role.lambda_role.arn
   runtime       = "python3.8"
   handler       = "lambda_function.lambda_handler"
-  filename      = "lambda_function.zip"
+  filename      = "${path.module}/lambda_function.zip"
   timeout       = 10
 
   environment {
