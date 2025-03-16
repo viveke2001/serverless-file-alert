@@ -28,13 +28,30 @@ resource "aws_iam_role" "lambda_role" {
   })
 }
 
-# Attach Policies to Lambda Role
-resource "aws_iam_policy_attachment" "lambda_policy" {
-  name       = "lambda_policy_attachment"
-  roles      = [aws_iam_role.lambda_role.name]
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-
+# IAM Policy for SNS Publish
+resource "aws_iam_policy" "lambda_sns_policy" {
+  name        = "lambda_sns_publish_policy"
+  description = "Allows Lambda to publish messages to SNS"
+  
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "sns:Publish"
+        Resource = aws_sns_topic.file_alerts.arn
+      }
+    ]
+  })
 }
+
+# Attach the SNS Publish Policy to Lambda Role
+resource "aws_iam_policy_attachment" "lambda_sns_attachment" {
+  name       = "lambda_sns_attachment"
+  roles      = [aws_iam_role.lambda_role.name]
+  policy_arn = aws_iam_policy.lambda_sns_policy.arn
+}
+
 
 # Lambda Function
 resource "aws_lambda_function" "file_alert_function" {
