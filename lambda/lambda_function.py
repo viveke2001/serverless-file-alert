@@ -5,25 +5,33 @@ import os
 sns_client = boto3.client("sns")
 
 def lambda_handler(event, context):
-    print("Event received:", json.dumps(event))
-    
-    # Extract file name from S3 event
-    records = event.get("Records", [])
-    if not records:
-        return {"statusCode": 400, "body": "No records found"}
-    
-    for record in records:
-        bucket_name = record["s3"]["bucket"]["name"]
-        file_name = record["s3"]["object"]["key"]
+    # Extract bucket name and file name from the event
+    for record in event['Records']:
+        bucket_name = record['s3']['bucket']['name']
+        file_name = record['s3']['object']['key']
+        event_time = record['eventTime']
+
+        # Format message
+        message = f"""
+         File Upload Alert 
         
-        message = f"New file uploaded: {file_name} in bucket {bucket_name}"
-        print(message)
+         A new file has been uploaded to S3!
         
-        # Send SNS email notification
-        sns_client.publish(
-            TopicArn=os.environ["SNS_TOPIC_ARN"],
+         File Name: {file_name}
+         Bucket Name: {bucket_name}
+         Timestamp: {event_time}
+        
+        Check your S3 bucket for details.
+        """
+
+        # Publish the message to SNS Topic
+        response = sns_client.publish(
+            TopicArn=os.environ['SNS_TOPIC_ARN'],
             Message=message,
-            Subject="File Upload Alert"
+            Subject=" New File Uploaded to S3!"
         )
-    
-    return {"statusCode": 200, "body": "Notification sent"}
+
+    return {
+        "statusCode": 200,
+        "body": json.dumps("SNS Notification Sent Successfully!")
+    }
