@@ -59,7 +59,7 @@ resource "aws_lambda_function" "file_alert_function" {
   role          = aws_iam_role.lambda_role.arn
   runtime       = "python3.8"
   handler       = "lambda_function.lambda_handler"
-  filename      = "${path.module}/lambda_function.zip"
+  filename      = "${path.module}/function.zip"
   timeout       = 10
 
   environment {
