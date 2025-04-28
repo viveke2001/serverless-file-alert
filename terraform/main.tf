@@ -87,3 +87,4 @@ resource "aws_lambda_permission" "allow_s3" {
   principal     = "s3.amazonaws.com"
   source_arn    = aws_s3_bucket.file_bucket.arn
 }
+#Project
